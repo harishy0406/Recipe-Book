@@ -3,50 +3,260 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Recipe Box — Store & Display Recipes</title>
+  <title>Recipe Master — Professional Recipe Management</title>
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
 <body>
   <header class="app-header">
     <div class="brand">
-      <h1>Recipe Box</h1>
-      <p class="tagline">Save, edit & share your favorite recipes 🍳</p>
+      <h1><i class="fas fa-utensils"></i> Recipe Master</h1>
+      <p class="tagline">Your professional recipe management platform</p>
     </div>
 
-    <div class="actions">
-      <input id="searchInput" type="search" placeholder="Search recipes..." />
-      <select id="filterSelect">
-        <option value="all">All</option>
-        <option value="breakfast">Breakfast</option>
-        <option value="lunch">Lunch</option>
-        <option value="dinner">Dinner</option>
-        <option value="dessert">Dessert</option>
-        <option value="snack">Snack</option>
-      </select>
-      <button id="addRecipeBtn" class="btn primary">+ Add Recipe</button>
-      <div class="more">
-        <button id="exportBtn" class="btn">Export</button>
-        <input id="importFile" type="file" accept="application/json" hidden />
-        <button id="importBtn" class="btn">Import</button>
+    <nav class="main-nav">
+      <button class="nav-btn active" data-page="home">
+        <i class="fas fa-home"></i> <span>Home</span>
+      </button>
+      <button class="nav-btn" data-page="profile">
+        <i class="fas fa-user-circle"></i> <span>Profile</span>
+      </button>
+      <button class="nav-btn" data-page="ai-mode">
+        <i class="fas fa-robot"></i> <span>AI Mode</span>
+      </button>
+    </nav>
+
+    <div class="user-menu">
+      <div class="user-info" id="userInfo">
+        <span id="userName">Guest</span>
+        <button id="logoutBtn" class="btn-icon" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
       </div>
     </div>
   </header>
 
-  <main class="container">
-    <section id="recipesGrid" class="grid"></section>
-
-    <aside class="sidebar">
-      <h3>Quick Tips</h3>
-      <ul>
-        <li>Click a recipe card to open full details.</li>
-        <li>Use the filter to narrow by meal type.</li>
-        <li>Images are stored locally (no upload to server).</li>
-      </ul>
-      <div class="small">
-        <strong>Local Storage Used:</strong>
-        <div id="storageInfo">0 recipes</div>
+  <main>
+    <!-- Home Page -->
+    <div id="homePage" class="page active">
+      <div class="page-header">
+        <div class="search-filters">
+          <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input id="searchInput" type="search" placeholder="Search recipes..." />
+          </div>
+          <select id="filterSelect">
+            <option value="all">All Categories</option>
+            <option value="breakfast">Breakfast</option>
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+            <option value="dessert">Dessert</option>
+            <option value="snack">Snack</option>
+          </select>
+          <select id="sortSelect">
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="rating">Highest Rated</option>
+            <option value="prepTime">Quickest</option>
+          </select>
+        </div>
+        <button id="addRecipeBtn" class="btn primary">
+          <i class="fas fa-plus"></i> Add Recipe
+        </button>
       </div>
-    </aside>
+
+      <div class="stats-bar">
+        <div class="stat-card">
+          <i class="fas fa-book"></i>
+          <div>
+            <span class="stat-value" id="totalRecipes">0</span>
+            <span class="stat-label">Total Recipes</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-heart"></i>
+          <div>
+            <span class="stat-value" id="favoriteCount">0</span>
+            <span class="stat-label">Favorites</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-clock"></i>
+          <div>
+            <span class="stat-value" id="avgPrepTime">0</span>
+            <span class="stat-label">Avg Prep (min)</span>
+          </div>
+        </div>
+      </div>
+
+      <section id="recipesGrid" class="grid"></section>
+    </div>
+
+    <!-- Profile Page -->
+    <div id="profilePage" class="page">
+      <div class="profile-container">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            <i class="fas fa-user-circle"></i>
+          </div>
+          <div class="profile-info">
+            <h2 id="profileName">Guest User</h2>
+            <p id="profileEmail">guest@example.com</p>
+            <div class="profile-stats">
+              <span><i class="fas fa-book"></i> <strong id="profileRecipeCount">0</strong> Recipes</span>
+              <span><i class="fas fa-heart"></i> <strong id="profileFavoriteCount">0</strong> Favorites</span>
+              <span><i class="fas fa-history"></i> <strong id="profileHistoryCount">0</strong> Views</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="profile-tabs">
+          <button class="tab-btn active" data-tab="account">Account Details</button>
+          <button class="tab-btn" data-tab="history">View History</button>
+          <button class="tab-btn" data-tab="favorites">Favorites</button>
+          <button class="tab-btn" data-tab="settings">Settings</button>
+        </div>
+
+        <div class="tab-content">
+          <!-- Account Tab -->
+          <div id="accountTab" class="tab-panel active">
+            <div class="form-card">
+              <h3>Edit Account Information</h3>
+              <form id="accountForm">
+                <label>
+                  Full Name
+                  <input type="text" id="accountName" required />
+                </label>
+                <label>
+                  Email
+                  <input type="email" id="accountEmail" required />
+                </label>
+                <label>
+                  Bio
+                  <textarea id="accountBio" rows="3" placeholder="Tell us about yourself..."></textarea>
+                </label>
+                <button type="submit" class="btn primary">Save Changes</button>
+              </form>
+            </div>
+          </div>
+
+          <!-- History Tab -->
+          <div id="historyTab" class="tab-panel">
+            <div class="history-list" id="historyList">
+              <p class="empty-state">No viewing history yet.</p>
+            </div>
+          </div>
+
+          <!-- Favorites Tab -->
+          <div id="favoritesTab" class="tab-panel">
+            <div class="grid" id="favoritesGrid">
+              <p class="empty-state">No favorites yet. Start adding recipes to your favorites!</p>
+            </div>
+          </div>
+
+          <!-- Settings Tab -->
+          <div id="settingsTab" class="tab-panel">
+            <div class="form-card">
+              <h3>Application Settings</h3>
+              <div class="setting-item">
+                <label>
+                  <input type="checkbox" id="darkMode" checked />
+                  <span>Dark Mode</span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <label>
+                  <input type="checkbox" id="notifications" />
+                  <span>Enable Notifications</span>
+                </label>
+              </div>
+              <div class="setting-item">
+                <label>
+                  Export Data
+                  <button id="exportDataBtn" class="btn">Export All Data</button>
+                </label>
+              </div>
+              <div class="setting-item">
+                <label>
+                  Import Data
+                  <input id="importFile" type="file" accept="application/json" hidden />
+                  <button id="importDataBtn" class="btn">Import Data</button>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Mode Page -->
+    <div id="aiModePage" class="page">
+      <div class="ai-container">
+        <div class="ai-header">
+          <h2><i class="fas fa-robot"></i> AI Recipe Generator</h2>
+          <p>Generate professional recipes using Google Gemini AI. Enter your Gemini API key to get started.</p>
+        </div>
+
+        <div class="form-card">
+          <h3>API Configuration</h3>
+          <label>
+            Google Gemini API Key
+            <div class="input-with-icon">
+              <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key" />
+              <button id="toggleApiKey" class="btn-icon" type="button">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+            <small>Your API key is stored locally and never shared. Get your key from <a href="https://makersuite.google.com/app/apikey" target="_blank" style="color: var(--accent);">Google AI Studio</a></small>
+          </label>
+          <button id="saveApiKeyBtn" class="btn primary">Save API Key</button>
+        </div>
+
+        <div class="form-card">
+          <h3>Generate Recipe</h3>
+          <form id="aiRecipeForm">
+            <label>
+              Recipe Description
+              <textarea id="aiPrompt" rows="4" placeholder="e.g., A healthy vegetarian pasta dish with fresh vegetables and herbs, takes 30 minutes to prepare" required></textarea>
+            </label>
+            <div class="ai-options">
+              <label>
+                Meal Type
+                <select id="aiMealType">
+                  <option value="breakfast">Breakfast</option>
+                  <option value="lunch">Lunch</option>
+                  <option value="dinner">Dinner</option>
+                  <option value="dessert">Dessert</option>
+                  <option value="snack">Snack</option>
+                </select>
+              </label>
+              <label>
+                Difficulty
+                <select id="aiDifficulty">
+                  <option value="easy">Easy</option>
+                  <option value="medium">Medium</option>
+                  <option value="hard">Hard</option>
+                </select>
+              </label>
+            </div>
+            <div class="form-actions">
+              <button type="submit" id="generateRecipeBtn" class="btn primary">
+                <i class="fas fa-magic"></i> Generate Recipe
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div id="aiResult" class="ai-result hidden">
+          <h3>Generated Recipe</h3>
+          <div id="aiResultContent"></div>
+          <button id="saveAiRecipeBtn" class="btn primary">Save to Recipe Book</button>
+        </div>
+
+        <div id="aiLoading" class="ai-loading hidden">
+          <div class="spinner"></div>
+          <p>Generating your recipe...</p>
+        </div>
+      </div>
+    </div>
   </main>
 
   <!-- Modal: Add / Edit Recipe -->
@@ -64,19 +274,39 @@
           <input id="title" type="text" required maxlength="100" />
         </label>
 
-        <label>Meal type
-          <select id="mealType">
-            <option value="breakfast">Breakfast</option>
-            <option value="lunch">Lunch</option>
-            <option value="dinner">Dinner</option>
-            <option value="dessert">Dessert</option>
-            <option value="snack">Snack</option>
-          </select>
-        </label>
+        <div class="form-row">
+          <label>Meal type
+            <select id="mealType">
+              <option value="breakfast">Breakfast</option>
+              <option value="lunch">Lunch</option>
+              <option value="dinner">Dinner</option>
+              <option value="dessert">Dessert</option>
+              <option value="snack">Snack</option>
+            </select>
+          </label>
 
-        <label>Preparation time (mins)
-          <input id="prepTime" type="number" min="0" value="15" />
-        </label>
+          <label>Difficulty
+            <select id="difficulty">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="form-row">
+          <label>Preparation time (mins)
+            <input id="prepTime" type="number" min="0" value="15" />
+          </label>
+
+          <label>Cooking time (mins)
+            <input id="cookTime" type="number" min="0" value="0" />
+          </label>
+
+          <label>Servings
+            <input id="servings" type="number" min="1" value="4" />
+          </label>
+        </div>
 
         <label>Ingredients
           <div id="ingredientsList" class="ingredients-list"></div>
@@ -86,8 +316,21 @@
           </div>
         </label>
 
+        <label>Description
+          <textarea id="description" rows="2" placeholder="Brief description of the recipe..."></textarea>
+        </label>
+
         <label>Instructions
           <textarea id="instructions" rows="6" placeholder="Step-by-step instructions..." required></textarea>
+        </label>
+
+        <label>Nutritional Info (optional)
+          <div class="nutrition-grid">
+            <input type="number" id="calories" placeholder="Calories" />
+            <input type="number" id="protein" placeholder="Protein (g)" />
+            <input type="number" id="carbs" placeholder="Carbs (g)" />
+            <input type="number" id="fat" placeholder="Fat (g)" />
+          </div>
         </label>
 
         <label>Image (optional)
@@ -111,8 +354,36 @@
     </div>
   </div>
 
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal hidden" role="dialog">
+    <div class="modal-content modal-small">
+      <header class="modal-header">
+        <h2>Welcome to Recipe Master</h2>
+        <button id="closeLoginModal" class="btn close">✕</button>
+      </header>
+      <form id="loginForm" class="form">
+        <label>
+          Full Name
+          <input type="text" id="loginName" required placeholder="Enter your name" />
+        </label>
+        <label>
+          Email
+          <input type="email" id="loginEmail" required placeholder="Enter your email" />
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="btn primary">Get Started</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <footer class="footer">
-    Built with ❤️ — stores recipes in your browser. No server required.
+    <p>Recipe Master — Professional Recipe Management Platform</p>
+    <p class="footer-links">
+      <span>Built with ❤️</span>
+      <span>•</span>
+      <span>All data stored locally in your browser</span>
+    </p>
   </footer>
 
   <script src="app.js" defer></script>
