@@ -1252,8 +1252,7 @@ body {
   .ai-options {
     grid-template-columns: 1fr;
   }
-}
-
+}Added social links in Footer
 @media (max-width: 480px) {
   .brand h1 {
     font-size: 1.5rem;
