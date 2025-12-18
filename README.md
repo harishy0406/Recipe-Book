@@ -79,6 +79,15 @@
      php -S localhost:8000
      ```
 
+Alternatively, you can run the included Node backend which also serves the frontend and provides the AI proxy endpoint:
+
+```bash
+npm install
+# Set your GEMINI_API_KEY (or OPENAI_API_KEY) in the environment, then:
+GEMINI_API_KEY=your_key_here npm start
+# Server will be available at http://localhost:3000
+```
+
 3. **Access the application**
    - Open your browser and navigate to `http://localhost:8000`
    - Or double-click `index.html` to open directly
