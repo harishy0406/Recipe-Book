@@ -187,73 +187,25 @@
       </div>
     </div>
 
-    <!-- AI Mode Page -->
+    <!-- AI Mode Page (Chatbot) -->
     <div id="aiModePage" class="page">
       <div class="ai-container">
         <div class="ai-header">
-          <h2><i class="fas fa-robot"></i> AI Recipe Generator</h2>
-          <p>Generate professional recipes using Google Gemini AI. Enter your Gemini API key to get started.</p>
+          <h2><i class="fas fa-robot"></i> AI Chat Assistant</h2>
+          <p>Chat with the AI assistant to generate recipes or ask culinary questions. API calls are handled server-side.</p>
         </div>
 
         <div class="form-card">
-          <h3>API Configuration</h3>
-          <label>
-            Google Gemini API Key
-            <div class="input-with-icon">
-              <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key" />
-              <button id="toggleApiKey" class="btn-icon" type="button">
-                <i class="fas fa-eye"></i>
-              </button>
-            </div>
-            <small>Your API key is stored locally and never shared. Get your key from <a href="https://makersuite.google.com/app/apikey" target="_blank" style="color: var(--accent);">Google AI Studio</a></small>
-          </label>
-          <button id="saveApiKeyBtn" class="btn primary">Save API Key</button>
-        </div>
+          <div class="ai-chat">
+            <div id="aiMessages" class="ai-messages" aria-live="polite"></div>
 
-        <div class="form-card">
-          <h3>Generate Recipe</h3>
-          <form id="aiRecipeForm">
-            <label>
-              Recipe Description
-              <textarea id="aiPrompt" rows="4" placeholder="e.g., A healthy vegetarian pasta dish with fresh vegetables and herbs, takes 30 minutes to prepare" required></textarea>
-            </label>
-            <div class="ai-options">
-              <label>
-                Meal Type
-                <select id="aiMealType">
-                  <option value="breakfast">Breakfast</option>
-                  <option value="lunch">Lunch</option>
-                  <option value="dinner">Dinner</option>
-                  <option value="dessert">Dessert</option>
-                  <option value="snack">Snack</option>
-                </select>
-              </label>
-              <label>
-                Difficulty
-                <select id="aiDifficulty">
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-              </label>
-            </div>
-            <div class="form-actions">
-              <button type="submit" id="generateRecipeBtn" class="btn primary">
-                <i class="fas fa-magic"></i> Generate Recipe
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <div id="aiResult" class="ai-result hidden">
-          <h3>Generated Recipe</h3>
-          <div id="aiResultContent"></div>
-          <button id="saveAiRecipeBtn" class="btn primary">Save to Recipe Book</button>
-        </div>
-
-        <div id="aiLoading" class="ai-loading hidden">
-          <div class="spinner"></div>
-          <p>Generating your recipe...</p>
+            <form id="aiChatForm" class="ai-chat-form">
+              <div class="chat-input-row">
+                <input id="aiChatInput" type="text" placeholder="Describe what you'd like (e.g. vegetarian pasta, 30 minutes)..." autocomplete="off" required />
+                <button id="aiSendBtn" class="btn primary" type="submit"><i class="fas fa-paper-plane"></i> Send</button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>

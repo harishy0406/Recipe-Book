@@ -116,6 +116,11 @@
     aiResultContent: document.getElementById("aiResultContent"),
     aiLoading: document.getElementById("aiLoading"),
     saveAiRecipeBtn: document.getElementById("saveAiRecipeBtn"),
+    // AI Chat (new)
+    aiChatForm: document.getElementById("aiChatForm"),
+    aiMessages: document.getElementById("aiMessages"),
+    aiChatInput: document.getElementById("aiChatInput"),
+    aiSendBtn: document.getElementById("aiSendBtn"),
     
     // Login
     loginModal: document.getElementById("loginModal"),
@@ -854,6 +859,49 @@ Important: Return ONLY the JSON object, no markdown formatting, no code blocks, 
     showPage("home");
   }
 
+  // --- AI Chat helper functions ---
+  function appendAiMessage(role, text) {
+    if (!elements.aiMessages) return;
+    const el = document.createElement('div');
+    el.className = 'message ' + (role === 'user' ? 'user' : 'bot');
+    el.innerHTML = `<div class="message-text">${escapeHtml(text)}</div>`;
+    elements.aiMessages.appendChild(el);
+    elements.aiMessages.scrollTop = elements.aiMessages.scrollHeight;
+    return el;
+  }
+
+  async function sendAiPrompt(prompt) {
+    if (!prompt) return;
+    // Show user message
+    appendAiMessage('user', prompt);
+
+    // Show a temporary thinking message and keep reference
+    const thinkingEl = appendAiMessage('bot', 'Thinking...');
+
+    try {
+      const resp = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt })
+      });
+
+      if (!resp.ok) {
+        const errText = await resp.text();
+        throw new Error(errText || `HTTP ${resp.status}`);
+      }
+
+      const data = await resp.json();
+      const reply = (data && (data.reply || data.output || data.text)) || JSON.stringify(data);
+
+      // replace thinking message with the reply
+      thinkingEl.innerHTML = `<div class="message-text">${escapeHtml(reply)}</div>`;
+      elements.aiMessages.scrollTop = elements.aiMessages.scrollHeight;
+    } catch (err) {
+      thinkingEl.innerHTML = `<div class="message-text">Error: ${escapeHtml(err.message || 'Request failed')}</div>`;
+      console.error('AI request error:', err);
+    }
+  }
+
   // Event Listeners
   elements.navBtns.forEach(btn => {
     btn.addEventListener("click", () => {
@@ -1084,6 +1132,30 @@ Important: Return ONLY the JSON object, no markdown formatting, no code blocks, 
   
   if (elements.saveAiRecipeBtn) {
     elements.saveAiRecipeBtn.addEventListener("click", saveAiRecipe);
+  }
+
+  // AI Chat form (new)
+  if (elements.aiChatForm) {
+    elements.aiChatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const val = elements.aiChatInput && elements.aiChatInput.value.trim();
+      if (!val) return;
+      sendAiPrompt(val);
+      if (elements.aiChatInput) elements.aiChatInput.value = '';
+    });
+  }
+
+  if (elements.aiChatInput) {
+    elements.aiChatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        const v = elements.aiChatInput.value.trim();
+        if (v) {
+          sendAiPrompt(v);
+          elements.aiChatInput.value = '';
+        }
+      }
+    });
   }
 
   // Login
